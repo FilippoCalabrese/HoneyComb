@@ -1,0 +1,36 @@
+{
+  "name": "honeycomb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "commander": "^2.20.0",
+    "eslint": "^5.16.0",
+    "fs": "^0.0.1-security",
+    "inquirer": "^6.2.2",
+    "jest": "^24.7.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FilippoCalabrese/HoneyComb.git"
+  },
+  "keywords": [
+    "html",
+    "css",
+    "cli",
+    "bootstrap5"
+  ],
+  "author": "Filippo Calabrese",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FilippoCalabrese/HoneyComb/issues"
+  },
+  "homepage": "https://github.com/FilippoCalabrese/HoneyComb#readme"
+}
