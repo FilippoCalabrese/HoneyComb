@@ -74,6 +74,10 @@ class HoneyComb {
     );
     console.log('Creating .gitignore file...');
 
+    console.log('Initializin project directories');
+    fs.mkdirSync('./css');
+    fs.mkdirSync('./js');
+
     //TODO: creare home.html e style.css
     console.log('Creating index.html and style.css files...');
 
@@ -144,7 +148,7 @@ class HoneyComb {
           file =>
             file == "${name}.js"
         );
-      for (let template of templates) this.createFile(template, name, '/js');
+      for (let template of templates) this.createFile(template, name, 'js');
   }
 
   createCssFile(name){
@@ -154,7 +158,7 @@ class HoneyComb {
           file =>
             file == "${name}.css"
         );
-      for (let template of templates) this.createFile(template, name, '/css');
+      for (let template of templates) this.createFile(template, name, 'css');
   }
 
   add(type, name){
