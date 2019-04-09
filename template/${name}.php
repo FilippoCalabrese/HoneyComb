@@ -10,9 +10,13 @@
     <header>
       <p>Header section</p>
     </header>
+    <div class="">
+      <?php
+        //your php code goes here...
+      ?>
+    </div>
     <footer>
       <p>Footer section</p>
-      <script type="text/javascript" src="/js/master.js"></script>
     </footer>
   </body>
 </html>

@@ -75,11 +75,18 @@ class HoneyComb {
     console.log('Creating .gitignore file...');
 
     console.log('Initializin project directories');
+
+    if (!fs.existsSync('./css'))
     fs.mkdirSync('./css');
+
+    if (!fs.existsSync('./js'))
     fs.mkdirSync('./js');
 
-    //TODO: creare home.html e style.css
     console.log('Creating index.html and style.css files...');
+
+    let honeyComb = new HoneyComb();
+    honeyComb.createCssFile('style');
+    honeyComb.createJsFile('master');
 
     console.log('Project initialized correctly! Have a good time!');
   }
@@ -161,6 +168,16 @@ class HoneyComb {
       for (let template of templates) this.createFile(template, name, 'css');
   }
 
+  createPhpFile(name){
+    const templates = fs
+        .readdirSync(__dirname+'/template')
+        .filter(
+          file =>
+            file == "${name}.php"
+        );
+      for (let template of templates) this.createFile(template, name, __dirname);
+  }
+
   add(type, name){
 
     switch (type) {
@@ -172,10 +189,13 @@ class HoneyComb {
         console.log('creating '+name+'.html');
         this.createHtmlFile(name);
         break;
-
       case 'js':
         console.log('creating '+name+'.js');
         this.createJsFile(name);
+        break;
+      case 'php':
+        console.log('creating '+name+'.php');
+        this.createPhpFile(name);
         break;
       default:
         console.log('Wrong parameter. Please, use HoneyComb create html/css/js ...');
