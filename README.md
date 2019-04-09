@@ -20,9 +20,9 @@ HoneyComb requires [Node.js](https://nodejs.org/) v4+ to run.
 Follow these steps in order to get up and running:
 
 ```sh
-$ npm install -g HoneyComb
-$ HoneyComb config
-$ HoneyComb add html|css|js name
+$ npm install -g dzhoneycomb
+$ honeycomb config
+$ honeycomb add html|css|js|php name
 ```
 
 ### Development

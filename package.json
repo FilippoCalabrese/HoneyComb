@@ -1,10 +1,14 @@
 {
-  "name": "honeycomb",
+  "name": "dzhoneycomb",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "directories": {
     "test": "tests"
+  },
+  "bin": {
+    "honeycomb": "./index.js",
+    "hc": "./index.js"
   },
   "dependencies": {
     "commander": "^2.20.0",
