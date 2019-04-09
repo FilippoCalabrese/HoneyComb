@@ -1,1 +1,1 @@
-[![Build Status](https://travis-ci.org/FilippoCalabrese/HoneyComb.svg?branch=master)](https://travis-ci.org/FilippoCalabrese/HoneyComb)
+[![Build Status](https://travis-ci.org/FilippoCalabrese/HoneyComb.svg?branch=master)](https://travis-ci.org/FilippoCalabrese/HoneyComb)  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
