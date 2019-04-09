@@ -18,33 +18,38 @@ const questions = [
       },
       {
         type: "confirm",
+        name: "jquery",
+        message:
+          "Are you using jQuery?",
+        default: true
+      },
+      {
+        type: "confirm",
         name: "git",
         message:
           "Are you using any sort of git version control system?",
         default: true
+      },
+      {
+        type: "input",
+        name: "author",
+        message:
+          "What's your name?",
+        default: "John Doe"
       }
 ];
 
 
 class HoneyComb {
-  configure() {
 
+  help(){
+
+  }
+
+  configure() {
     inquirer.prompt(questions).then(function(answers) {
         try {
-          fs.writeFileSync(
-            ".honeycomb.config.json",
-            JSON.stringify(answers)
-          );
-
-          const CONFIG = JSON.parse(fs.readFileSync(".honeycomb.config.json", "utf-8"));
-          console.log('Creating HoneyComb configuration file...');
-          if(CONFIG.git)
-          fs.writeFileSync(
-            ".gitignore",
-            ".honeycomb.config.json"
-          );
-          console.log('Creating .gitignore file...');
-          console.log('Project initialized correctly! Have a good time!');
+          HoneyComb.parseConfigurationAnswers(answers);
 
         } catch (err) {
           console.log(err);
@@ -52,8 +57,28 @@ class HoneyComb {
         }
 
       });
-
     }
+
+  static parseConfigurationAnswers(answers){
+    fs.writeFileSync(
+      ".honeycomb.config.json",
+      JSON.stringify(answers)
+    );
+
+    const CONFIG = JSON.parse(fs.readFileSync(".honeycomb.config.json", "utf-8"));
+    console.log('Creating HoneyComb configuration file...');
+    if(CONFIG.git)
+    fs.writeFileSync(
+      ".gitignore",
+      ".honeycomb.config.json"
+    );
+    console.log('Creating .gitignore file...');
+
+    //TODO: creare home.html e style.css
+    console.log('Creating index.html and style.css files...');
+
+    console.log('Project initialized correctly! Have a good time!');
+  }
 
   createFile (file, name, path) {
     const fileName = file.replace("${name}", name);
@@ -87,19 +112,29 @@ class HoneyComb {
         );
       for (let template of templates) {
         console.log('OK!!!', __dirname);
-        createFile(template, name, __dirname);
+        this.createFile(template, name, __dirname);
       }
 
-      fs.readFile(name+'.html', 'utf8', function (err,data) {
-        if (err) {
-          return console.log(err);
-        }
-        var result = data.replace('${name}', name);
+      const CONFIG = JSON.parse(fs.readFileSync(".honeycomb.config.json", "utf-8"));
+      this.replaceFileContent([name, '.html'], '${name}', name);
+      this.replaceFileContent([name, '.html'], '${author}', CONFIG.author);
 
-        fs.writeFile(name+'.html', result, 'utf8', function (err) {
-           if (err) return console.log(err);
-        });
+      //TODO: parsare le risposte ed inserire le dipendenze giuste in ogni file
+
+  }
+
+  replaceFileContent(file, find, replace){
+    let fileName = file[0]+file[1];
+    fs.readFile(fileName, 'utf8', function (err,data) {
+      if (err) {
+        return console.log(err);
+      }
+      let result = data.replace(find, replace);
+
+      fs.writeFile(fileName, result, 'utf8', function (err) {
+         if (err) return console.log(err);
       });
+    });
   }
 
   createJsFile(name) {
@@ -109,7 +144,7 @@ class HoneyComb {
           file =>
             file == "${name}.js"
         );
-      for (let template of templates) createFile(template, name, '/js');
+      for (let template of templates) this.createFile(template, name, '/js');
   }
 
   createCssFile(name){
@@ -119,7 +154,29 @@ class HoneyComb {
           file =>
             file == "${name}.css"
         );
-      for (let template of templates) createFile(template, name, '/css');
+      for (let template of templates) this.createFile(template, name, '/css');
+  }
+
+  add(type, name){
+
+    switch (type) {
+      case 'css':
+        console.log('creating '+name+'.css');
+        this.createCssFile(name);
+        break;
+      case 'html':
+        console.log('creating '+name+'.html');
+        this.createHtmlFile(name);
+        break;
+
+      case 'js':
+        console.log('creating '+name+'.js');
+        this.createJsFile(name);
+        break;
+      default:
+        console.log('Wrong parameter. Please, use HoneyComb create html/css/js ...');
+
+    }
   }
 }
 
@@ -131,11 +188,8 @@ const main = () => {
 
   program.command("help").action(() => honeyComb.help());
 
-  program
-    .command("add [name]")
-    .option("-p, --path [path]")
-    .action((name, opt) => {
-      honeyComb.add(name, opt.path);
+  program.command("add [type] [name]").action((type, name) => {
+      honeyComb.add(type, name);
     });
 
 
