@@ -1,4 +1,2 @@
 .honeycomb.config.json
-/node_modules/
-/css/
-/js/
+node_modules/

@@ -1,3 +1,37 @@
+#!/usr/bin/env node
+
+/***
+ * HONEYCOMB
+ * Your html companion
+ */
+ const HELP_MSG = `
+ NAME
+     HoneyComb, your html companion <3
+
+ DESCRIPTION
+     HoneyComb speeds up the workflow in managing HTML / CSS / JS projects.
+
+ SYNOPSIS
+     honeycomb|hc <command> [name] [options]
+
+ AVAILABLE COMMAND:
+     config  change the default settings of HoneyComb. you need to initialize the cli before
+   add html|css|js|php [name]     creates a new file from standard template (don't specify the extension in file's name)
+
+ COPYRIGHT
+     HoneyComb is available under the MIT license.
+     HoneyComb also includes external libraries that are available under MIT license.
+
+ SEE ALSO
+     GitHub repository & Issue Tracker: https://github.com/FilippoCalabrese/honeycomb
+     Npmjs: https://www.npmjs.com/package/dzhoneycomb
+     Website:
+     Documentation:
+
+ AUTHORS
+     Filippo Calabrese (https://github.com/filippocalabrese)
+
+ `;
 const fs = require('fs');
 const program = require("commander");
 const inquirer = require("inquirer");
@@ -36,6 +70,13 @@ const questions = [
         message:
           "What's your name?",
         default: "John Doe"
+      },
+      {
+        type: "input",
+        name: "projectName",
+        message:
+          "That's the project name?",
+        default: "Lorem Ipsum"
       }
 ];
 
@@ -43,7 +84,7 @@ const questions = [
 class HoneyComb {
 
   help(){
-
+    console.log(HELP_MSG);
   }
 
   configure() {
@@ -59,6 +100,14 @@ class HoneyComb {
       });
     }
 
+  clearSettings() {
+    fs.writeFileSync(
+      ".honeycomb.config.json",
+      ""
+    );
+    console.log("HoneyComb settings restored");
+  }
+
   static parseConfigurationAnswers(answers){
     fs.writeFileSync(
       ".honeycomb.config.json",
@@ -67,12 +116,19 @@ class HoneyComb {
 
     const CONFIG = JSON.parse(fs.readFileSync(".honeycomb.config.json", "utf-8"));
     console.log('Creating HoneyComb configuration file...');
-    if(CONFIG.git)
-    fs.writeFileSync(
-      ".gitignore",
-      ".honeycomb.config.json"
-    );
-    console.log('Creating .gitignore file...');
+    if(CONFIG.git) {
+      console.log('Creating .gitignore file...');
+      fs.writeFileSync(
+        ".gitignore",
+        ".honeycomb.config.json"
+      );
+      console.log('Creating README.md file...');
+      fs.writeFileSync(
+        "README.md",
+        CONFIG.projectName
+      );
+    }
+
 
     console.log('Initializin project directories');
 
@@ -87,6 +143,7 @@ class HoneyComb {
     let honeyComb = new HoneyComb();
     honeyComb.createCssFile('style');
     honeyComb.createJsFile('master');
+    honeyComb.createHtmlFile('index');
 
     console.log('Project initialized correctly! Have a good time!');
   }
@@ -100,7 +157,7 @@ class HoneyComb {
     }
 
     const data = fs
-      .readFileSync(`template/${file}`, "utf-8")
+      .readFileSync(`${__dirname}/template/${file}`, "utf-8")
       .split('${name}')
       .join(name);
 
@@ -122,12 +179,12 @@ class HoneyComb {
             file == "${name}.html"
         );
       for (let template of templates) {
-        console.log('OK!!!', __dirname);
-        this.createFile(template, name, __dirname);
+        this.createFile(template, name, './');
       }
 
       const CONFIG = JSON.parse(fs.readFileSync(".honeycomb.config.json", "utf-8"));
-      this.replaceFileContent([name, '.html'], '${name}', name);
+      let title = CONFIG.projectName+' | '+name;
+      this.replaceFileContent([name, '.html'], '${name}', title);
       this.replaceFileContent([name, '.html'], '${author}', CONFIG.author);
 
       //TODO: parsare le risposte ed inserire le dipendenze giuste in ogni file
@@ -178,7 +235,21 @@ class HoneyComb {
       for (let template of templates) this.createFile(template, name, __dirname);
   }
 
+  verifySettings() {
+    const CONFIG = fs.readFileSync(".honeycomb.config.json", "utf-8");
+    if(CONFIG==''){
+      throw 'HoneyComb need to know your project structure. Please, run $honeycomb configure';
+    }
+  }
+
   add(type, name){
+
+    try {
+      this.verifySettings();
+    } catch (e) {
+      console.log(e);
+      return;
+    }
 
     switch (type) {
       case 'css':
@@ -219,6 +290,14 @@ const main = () => {
 
   program.command("config").action(() => {
     honeyComb.configure();
+  });
+
+  program.command("configure").action(() => {
+    honeyComb.configure();
+  });
+
+  program.command("clear-settings").action(() => {
+    honeyComb.clearSettings();
   });
 
 
