@@ -24,6 +24,7 @@ Follow these steps in order to get up and running:
 $ npm install -g dzhoneycomb
 $ honeycomb config
 $ honeycomb add html|css|js|php name
+$ honeycomb compress img
 ```
 
 ### Development

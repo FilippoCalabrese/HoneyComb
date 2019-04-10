@@ -1,6 +1,6 @@
 {
   "name": "dzhoneycomb",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -16,7 +16,7 @@
     "fs": "^0.0.1-security",
     "imagemin": "^6.1.0",
     "imagemin-jpegtran": "^6.0.0",
-    "imagemin-pngquant": "^6.0.0",
+    "imagemin-pngquant": "^7.0.0",
     "inquirer": "^6.2.2",
     "jest": "^24.7.1"
   },
