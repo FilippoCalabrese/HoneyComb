@@ -35,6 +35,9 @@
 const fs = require('fs');
 const program = require("commander");
 const inquirer = require("inquirer");
+const imagemin = require('imagemin');
+const imageminJpegtran = require('imagemin-jpegtran');
+const imageminPngquant = require('imagemin-pngquant');
 const questions = [
 
       {
@@ -130,13 +133,19 @@ class HoneyComb {
     }
 
 
-    console.log('Initializin project directories');
+    console.log('Initializing project directories...');
 
     if (!fs.existsSync('./css'))
     fs.mkdirSync('./css');
 
     if (!fs.existsSync('./js'))
     fs.mkdirSync('./js');
+
+    if (!fs.existsSync('./img'))
+    {
+      console.log('creating img folder');
+      fs.mkdirSync('./img');
+    }
 
     console.log('Creating index.html and style.css files...');
 
@@ -235,11 +244,29 @@ class HoneyComb {
       for (let template of templates) this.createFile(template, name, __dirname);
   }
 
-  verifySettings() {
+  static verifySettings() {
     const CONFIG = fs.readFileSync(".honeycomb.config.json", "utf-8");
     if(CONFIG==''){
       throw 'HoneyComb need to know your project structure. Please, run $honeycomb configure';
     }
+  }
+
+  async compressImg(){
+    console.log("Compressing project images in /img directory:");
+    (async () => {
+        const files = await imagemin(['img/*.{jpg,png}'], 'img/', {
+            plugins: [
+                imageminJpegtran(),
+                imageminPngquant({quality: '30-35'})
+            ]
+        });
+
+        for (let file  in files) {
+          console.log(file);
+        }
+        console.log("image compression completed!");
+        //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
+    })();
   }
 
   add(type, name){
@@ -298,6 +325,21 @@ const main = () => {
 
   program.command("clear-settings").action(() => {
     honeyComb.clearSettings();
+  });
+
+  program.command("compress [type]").action((type) => {
+
+    HoneyComb.verifySettings();
+
+    try {
+      if(type=='img')
+      honeyComb.compressImg();
+      else
+      console.log("Error with parameters, please use $honeycomb compress img");
+    } catch (e) {
+      console.log("There was an error with your command: "+e);
+    }
+
   });
 
 
