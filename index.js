@@ -35,6 +35,9 @@
 const fs = require('fs');
 const program = require("commander");
 const inquirer = require("inquirer");
+const imagemin = require('imagemin');
+const imageminJpegtran = require('imagemin-jpegtran');
+const imageminPngquant = require('imagemin-pngquant');
 const questions = [
 
       {
@@ -130,17 +133,21 @@ class HoneyComb {
     }
 
 
-    console.log('Initializin project directories');
+    console.log('Initializing project directories...');
 
     if (!fs.existsSync('./css'))
-    fs.mkdirSync('./css');
+      fs.mkdirSync('./css');
 
     if (!fs.existsSync('./js'))
-    fs.mkdirSync('./js');
+      fs.mkdirSync('./js');
+
+    if (!fs.existsSync('./img'))
+      fs.mkdirSync('./img');
+
 
     console.log('Creating index.html and style.css files...');
 
-    let honeyComb = new HoneyComb();
+    const honeyComb = new HoneyComb();
     honeyComb.createCssFile('style');
     honeyComb.createJsFile('master');
     honeyComb.createHtmlFile('index');
@@ -235,11 +242,29 @@ class HoneyComb {
       for (let template of templates) this.createFile(template, name, __dirname);
   }
 
-  verifySettings() {
+  static verifySettings() {
     const CONFIG = fs.readFileSync(".honeycomb.config.json", "utf-8");
     if(CONFIG==''){
       throw 'HoneyComb need to know your project structure. Please, run $honeycomb configure';
     }
+  }
+
+  async compressImg(){
+    console.log("Compressing project images in /img directory:");
+    (async () => {
+        const files = await imagemin(['img/*.{jpg,png}'], 'img/', {
+            plugins: [
+                imageminJpegtran(),
+                imageminPngquant({quality: '30-35'})
+            ]
+        });
+
+        for (let file  in files) {
+          console.log(file);
+        }
+
+        console.log("img compression completed!");
+    })();
   }
 
   add(type, name){
@@ -283,10 +308,9 @@ const main = () => {
 
   program.command("help").action(() => honeyComb.help());
 
-  program.command("add [type] [name]").action((type, name) => {
+  program.command("add [type] [name]").option('html|css|js|php [name]', 'Create a new file of the given extension with the given name').action((type, name) => {
       honeyComb.add(type, name);
     });
-
 
   program.command("config").action(() => {
     honeyComb.configure();
@@ -296,8 +320,23 @@ const main = () => {
     honeyComb.configure();
   });
 
-  program.command("clear-settings").action(() => {
+  program.command("clear-settings").option('Clear HoneyComb settings for this project').action(() => {
     honeyComb.clearSettings();
+  });
+
+  program.command("compress [type]").option('img', 'Compress all images in /img folder').action((type) => {
+
+    HoneyComb.verifySettings();
+
+    try {
+      if(type=='img')
+      honeyComb.compressImg();
+      else
+      console.log("Error with parameters, please use $honeycomb compress img");
+    } catch (e) {
+      console.log("There was an error with your command: "+e);
+    }
+
   });
 
 
