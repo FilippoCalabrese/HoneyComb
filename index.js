@@ -136,20 +136,18 @@ class HoneyComb {
     console.log('Initializing project directories...');
 
     if (!fs.existsSync('./css'))
-    fs.mkdirSync('./css');
+      fs.mkdirSync('./css');
 
     if (!fs.existsSync('./js'))
-    fs.mkdirSync('./js');
+      fs.mkdirSync('./js');
 
     if (!fs.existsSync('./img'))
-    {
-      console.log('creating img folder');
       fs.mkdirSync('./img');
-    }
+
 
     console.log('Creating index.html and style.css files...');
 
-    let honeyComb = new HoneyComb();
+    const honeyComb = new HoneyComb();
     honeyComb.createCssFile('style');
     honeyComb.createJsFile('master');
     honeyComb.createHtmlFile('index');
@@ -264,8 +262,8 @@ class HoneyComb {
         for (let file  in files) {
           console.log(file);
         }
-        console.log("image compression completed!");
-        //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
+
+        console.log("img compression completed!");
     })();
   }
 
