@@ -310,10 +310,9 @@ const main = () => {
 
   program.command("help").action(() => honeyComb.help());
 
-  program.command("add [type] [name]").action((type, name) => {
+  program.command("add [type] [name]").option('html|css|js|php [name]', 'Create a new file of the given extension with the given name').action((type, name) => {
       honeyComb.add(type, name);
     });
-
 
   program.command("config").action(() => {
     honeyComb.configure();
@@ -323,11 +322,11 @@ const main = () => {
     honeyComb.configure();
   });
 
-  program.command("clear-settings").action(() => {
+  program.command("clear-settings").option('Clear HoneyComb settings for this project').action(() => {
     honeyComb.clearSettings();
   });
 
-  program.command("compress [type]").action((type) => {
+  program.command("compress [type]").option('img', 'Compress all images in /img folder').action((type) => {
 
     HoneyComb.verifySettings();
 
